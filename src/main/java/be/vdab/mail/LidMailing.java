@@ -10,10 +10,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 class LidMailing {
+
+    private final String webmaster ;
     private final JavaMailSender sender;
     private final String userName;
-    LidMailing(JavaMailSender sender,
+    LidMailing(@Value("${webmaster}") String webmaster, JavaMailSender sender,
                @Value("${spring.mail.username}") String userName) {
+        this.webmaster = webmaster;
         this.sender = sender;
         this.userName = userName;
     }
@@ -27,6 +30,15 @@ class LidMailing {
         helper.setTo(lid.getEmailAdres());
         helper.setSubject("Geregistreerd");
         helper.setText("<h1>Je bent nu lid. </h1> Je nummer is:" + lid.getId(), true);
+        sender.send(message);
+    }
+
+    void stuurMailMetAantalLeden(long aantalLeden) throws MessagingException{
+        var message = new SimpleMailMessage();
+        message.setFrom(userName);
+        message.setTo(webmaster);
+        message.setSubject("Aantal Leden");
+        message.setText(aantalLeden + " leden");
         sender.send(message);
     }
 }

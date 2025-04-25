@@ -1,6 +1,7 @@
 package be.vdab.mail;
 
 import jakarta.mail.MessagingException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,5 +22,11 @@ class LidService {
                 nieuwLid.emailAdres());
         lidRepository.save(lid);
         lidMailing.stuurMailNaRegistratie(lid);
+    }
+
+    @Scheduled(fixedRate = 60_000)
+// test = om de minuut
+    void stuurMailMetAantalLeden() throws MessagingException {
+        lidMailing.stuurMailMetAantalLeden(lidRepository.count());
     }
 }
